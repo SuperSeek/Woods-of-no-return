@@ -1,0 +1,210 @@
+#Kayden Sasikkumar - Woods of no return - Due October 10 2o24
+import time
+import random
+
+#Adds suspense(Slows down the rate the text is produced)
+def delayed_text(text):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(0.04)  #Not to slow because it would definetely make the player bored
+    print("\n")
+
+#Function to check inputs
+def get_choice(options):
+    choice = input().lower()
+    while choice not in options:
+        print("Invalid choice, try again.")
+        choice = input().lower()
+    return choice
+
+#This function makes it overall easier to end the game
+def end_game(message):
+    delayed_text(message)
+    delayed_text("Game Over.\n")
+    exit()
+
+#Inventory and player health section
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+        self.inventory = []
+
+    def take_damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            end_game(f"\n{name}, you have no health left. Maybe next time you can actually win.")
+        else:
+            delayed_text(f"\n{name}, you took {amount} damage. Your health is now {self.health}.")
+
+    def add_item(self, item):
+        self.inventory.append(item)
+        delayed_text(f"\nYou found a {item}. It might come in handy later.")
+
+    def has_item(self, item):
+        return item in self.inventory
+
+    def remove_item(self, item):
+        if self.has_item(item):
+            self.inventory.remove(item)
+            delayed_text(f"\nYou used the {item}.")
+
+#Game Intro
+delayed_text("Welcome to the 'Escape the Camp' Adventure Game!")
+delayed_text("What's your name, brave explorer?")
+name = input()
+player = Player(name)
+#Used \n for most lines to create less clutter
+delayed_text(f"\nHey {name}, you and your best friend, Tony, are exploring an abandoned camp late at night.")
+delayed_text("But your curiosity took a dark turn when you heard heavy footsteps behind you.")
+delayed_text("You both realize it’s not just an animal in the woods. It’s a killer, and now you must run to survive!\n")
+
+#First choice | Adding a random item to your inventory
+delayed_text(f"\nAs you run, you see something shiny on the ground. Do you PICK it up or LEAVE it? (pick/leave): ")
+choice0 = get_choice(["pick", "leave"])
+
+if choice0 == "pick":
+    item = random.choice(["flashlight", "rusty knife", "first aid kit"]) #Generates a random item which can be used depending on the right path
+    player.add_item(item)
+    delayed_text(f"\nYou quickly grab the {item} and keep running.")
+else:
+    delayed_text("\nYou leave it behind, focusing only on running faster.")
+
+#Second Choice | Introducing Loyal
+delayed_text(f"\nSuddenly, you hear a shout from behind. It’s Loyal, a friend from camp, calling out for help.")
+delayed_text("Do you STOP to help Loyal or keep RUNNING? (stop/run): ")
+choice1 = get_choice(["stop", "run"])
+
+if choice1 == "stop":
+    delayed_text("\nYou quickly turn back and help Loyal, who's twisted his ankle.")
+    
+    if player.has_item("first aid kit"):
+        delayed_text("Do you give him your FIRST AID kit or try to HOLD him up? (first aid/hold): ")
+        choice2 = get_choice(["first aid", "hold"])
+        if choice2 == "first aid":
+            delayed_text("\nYou use your first aid kit to help Loyal. He can walk again!")
+            player.remove_item("first aid kit")
+            delayed_text("\nYou all run together toward the woods.")
+        else:
+            delayed_text("\nYou try to hold Loyal up, but he slows you down.")
+            player.take_damage(80) #Player takes this much damage to kill them later on (Depending on their choice)
+            delayed_text("The killer is getting closer!")
+    else:
+        delayed_text("\nYou try to hold Loyal up.")
+        player.take_damage(50)
+        delayed_text("It’s tough, but you manage to keep moving with him.")
+else:
+    delayed_text("\nYou decide to keep running, leaving Loyal behind.")
+    end_game("Loyal snitched on you becuase you left him, the killer cut off all of your limbs. YOU LOSE.")
+#Third Choice | Encounter with Pranushan
+delayed_text("\nYou, Loyal and Tony hear footsteps ahead. It’s Pranushan, running towards you!")
+delayed_text(f"Pranushan shouts, ‘There’s a CABIN up ahead! We can hide there or run into the WOODS.’ What do you do? (cabin/woods): ")
+choice3 = get_choice(["cabin", "woods"])
+
+if choice3 == "cabin":
+    delayed_text("\nYou, Loyal, Tony, and Pranushan rush into the cabin.")
+    delayed_text("The door creaks as you close it, but you’re not sure if the killer heard it.\n")
+
+#Encounter with Samuel
+    delayed_text("\nInside, you find Samuel hiding in a corner, holding a crowbar.")
+    delayed_text("Do you ASK Samuel to join or SEARCH the cabin for supplies? (ask/search): ")
+    choice4 = get_choice(["ask", "search"])
+
+    if choice4 == "ask":
+        delayed_text("\nSamuel agrees to join you, holding his crowbar tightly.")
+        delayed_text("Together, you barricade the door and wait in silence.")
+        delayed_text("But the banging starts. The killer is trying to break in!\n")
+
+        delayed_text("Do you SEARCH for a way out or stay and FIGHT? (search/fight): ")
+        choice5 = get_choice(["search", "fight"])
+
+        if choice5 == "search":
+            player.take_damage(40) #If the player decided to NOT use the first aid kit on Loyal, they will die here
+            delayed_text("\nYou find a window and escape into the woods with everyone.") 
+            delayed_text("loyal volunteered to stay back and buy some time, you will never forget his sacrifice.")
+            delayed_text("You run through the darkness, hoping to lose the killer.")
+            delayed_text("You and your friends find a spot to chill for a little before moving on, Pranushan tries brightening the mood by cracking a joke.")
+            delayed_text("Pranushan: How much does it take to keep Donald Trump alive? 1 Pence!")
+            delayed_text("No one laughed at the joke which caused Pranushan to wonder off in the woods, NEVER to be seen again.")
+            delayed_text("After a long night, you, Tony and Samuel survive, but you're severly wounded.")
+            delayed_text("While walking through the forest, you hear a scream and turn back to see samuel missing.")
+        else:
+            if player.has_item("rusty knife"):
+                delayed_text("\nYou decide to fight. Using your rusty knife, you stab the killer as he breaks in.")
+                delayed_text("The killer retreats, wounded. You and your friends survive!")
+                end_game("Thanks for playing!")
+            else:
+                end_game("\nYou don’t have any weapons. The killer overpowers all of you.")
+
+    elif choice4 == "search":
+        if random.random() < 0.4: #40 percent chance of samuel saying these lines
+            delayed_text("\nSamuel: Hey..Why didn't you invite me to join you guys?")
+            delayed_text("\nSamuel swings his crowbar at you dealing a lethal blow")
+            player.take_damage(50) #Player took 50 damage picking up Loyal, which means they will die to this
+
+        else:
+            delayed_text("\nYou sadly found nothing while searching the cabin.")
+            delayed_text("\nYou decide to barricade the door and hide. The night is long, but you all survive till morning.")
+            delayed_text("Loyal, Pranushan and Samuel decide to stay back, while you and Tony ventured off.")
+
+elif choice3 == "woods":
+    delayed_text("\nYou, Loyal and Tony run into the dense woods, hoping the trees will hide you.")
+    delayed_text("Pranushan trips, and you lose sight of him as you keep running.")
+
+    delayed_text("Suddenly, you hear someone yelling from the side—a group of survivors led by Johnny and Pravin.\n")
+    delayed_text(f"Johnny shouts, ‘{name}, come with us! We know a way out!’")
+    delayed_text("Do you FOLLOW Johnny’s group or KEEP running? (follow/run): ")
+    choice6 = get_choice(["follow", "run"])
+
+    if choice6 == "follow":
+        delayed_text("\nYou follow Johnny’s group through the forest, hoping they know the way.")
+        delayed_text("Pravin pulls out a map and tries to guide you, but something feels off...\n")
+        delayed_text("It turns out the map is fake! You realize Pravin was leading you in circles.")
+        end_game("The killer catches up while you're lost in the woods.")
+    elif choice6 == "run":
+        delayed_text("\nYou keep running, trusting your instincts.")
+        delayed_text("As you sprint through the woods, you spot a dirt road ahead. Tony follows, but you lose sight of the loyal and the group.")
+
+#Flashlight Use Decision (only IF you got flashlight from the 'pick' option)
+if player.has_item("flashlight"):
+    delayed_text("\nDo you use the FLASHLIGHT to light the way or keep it off? (use/keep off): ")
+    choice_flashlight = get_choice(["use", "keep off"])
+
+    if choice_flashlight == "use":
+        delayed_text("\nThe flashlight illuminates the path ahead, helping you avoid dangerous terrain.")
+        delayed_text("You and Tony navigate through the woods more safely.")
+    else:
+        delayed_text("\nYou keep the flashlight off, but stumble over a hidden branch into a pit of spikes.")
+        delayed_text("\nShould of used your flashlight.")
+        player.take_damage(100)
+
+#Ritvik Ending
+delayed_text("As you reach the road, you see headlights approaching!")
+delayed_text(f"Ritvik, a driver you know from town, pulls over and yells ‘Get in!’")
+delayed_text("Do you GET IN the car or HIDE in the bushes? (get in/hide): ")
+choice7 = get_choice(["get in", "hide"])
+
+if choice7 == "get in":
+    delayed_text("\nYou and Tony jump into the car, relieved to see a familiar face.")
+    delayed_text("Ritvik drives quickly, but there’s something odd about his driving...")
+    delayed_text("Suddenly, Ritvik loses control and crashes into a tree!")
+    end_game("You don’t survive the crash. The killer finds you.")
+elif choice7 == "hide":
+    delayed_text("\nYou decide not to trust Ritvik and hide in the bushes instead.")
+    delayed_text("The killer runs past, not seeing you. You and Tony continue running.\n")
+
+#Final Decision: Truck or Tree
+delayed_text(f"\nTony turns to you and says, ‘{name}, we can’t keep running forever. What’s the plan?’")
+delayed_text("You think carefully about your next move.")
+delayed_text("Do you HEAD towards a nearby abandoned truck or CLIMB a nearby tree? (truck/tree): ")
+choice8 = get_choice(["truck", "tree"])
+
+if choice8 == "truck":
+    delayed_text("\nYou head towards the abandoned truck, hoping to use it as shelter.")
+    delayed_text("But the truck’s doors are locked. You hear footsteps behind you...")
+    end_game("The killer finds you while you struggle with the door.")
+elif choice8 == "tree":
+    delayed_text("\nYou and Tony climb up the tree, staying as quiet as possible.")
+    delayed_text("The killer searches below but doesn’t notice you.")
+    delayed_text(f"After what feels like hours, you and Tony climb down and find your way to safety.\n{name}, you survived the night!")
+#GAME OVER
